@@ -124,7 +124,7 @@ export default function TableComponent({
 
   React.useEffect(() => {
     const value = searchValue.toLowerCase();
-    console.log("search", value);
+
     if (value === "") {
       setTableData(rows);
     } else {
@@ -138,7 +138,6 @@ export default function TableComponent({
     }
   }, [searchValue, rows]);
 
-  console.log(searchValue);
   return (
     <div>
       <Box sx={{ width: "60%" }}>
@@ -185,7 +184,7 @@ export default function TableComponent({
                               aria-checked={isItemSelected}
                               tabIndex={-1}
                               selected={isItemSelected}
-                              color="primary"
+                              color="error"
                               checked={isItemSelected}
                               inputProps={{
                                 "aria-labelledby": labelId,

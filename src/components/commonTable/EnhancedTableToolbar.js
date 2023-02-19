@@ -6,8 +6,8 @@ import PropTypes from "prop-types";
 import { alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { Box, TextField } from "@mui/material";
+
+import { Box, Button, TextField } from "@mui/material";
 export function EnhancedTableToolbar(props) {
   const { numSelected, tableName, searchValue, setSearchValue } = props;
 
@@ -44,7 +44,14 @@ export function EnhancedTableToolbar(props) {
           {tableName}
         </Typography>
       )}
-
+      <Button
+        sx={{ m: 0.5, py: 1 }}
+        style={{ textTransform: "none" }}
+        variant="contained"
+        size="small"
+      >
+        Option
+      </Button>
       {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton>
