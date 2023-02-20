@@ -124,24 +124,20 @@ export default function TableComponent({
 
   React.useEffect(() => {
     const value = searchValue.toLowerCase();
-    console.log("search",value)
-    if(value==="") {
 
     if (value === "") {
       setTableData(rows);
     } else {
       const SearchedText = tableData.filter((data) => {
         const productValue = data.calories.toLowerCase();
-        
-        return value=== "" ?  rows : productValue.includes(value);
+
+        return value === "" ? rows : productValue.includes(value);
       });
 
       setTableData(SearchedText);
     }
- 
-  }, [searchValue,rows]);
-  
-  console.log(searchValue);
+  }, [searchValue, rows]);
+
   return (
     <div>
       <Box sx={{ width: "60%" }}>
