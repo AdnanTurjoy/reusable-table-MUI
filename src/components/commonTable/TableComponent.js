@@ -1,7 +1,5 @@
 import * as React from "react";
-import PropTypes from "prop-types";
-import { alpha } from "@mui/material/styles";
-import FormControlLabel from "@mui/material/FormControlLabel";
+
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -33,10 +31,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -72,7 +66,13 @@ export default function TableComponent({
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-
+  const center = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "200px",
+    border: "3px solid green",
+  };
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelected = tableData.map((n) => n.id);
@@ -124,80 +124,71 @@ export default function TableComponent({
 
   React.useEffect(() => {
     const value = searchValue.toLowerCase();
-
+    console.log("search",value)
     if(value==="") {
 
-      setTableData(rows)
-    }else{
+    if (value === "") {
+      setTableData(rows);
+    } else {
       const SearchedText = tableData.filter((data) => {
-        const productValue = headCells.map((cellName, id) => {
-         const checkData= data[cellName.id];
-         if(checkData!==undefined) {
-          
-            return checkData.toString().toLowerCase() ;
+        const productValue = data.calories.toLowerCase();
         
-        }
-        })
-         
-        
-        return productValue.includes(value);
+        return value=== "" ?  rows : productValue.includes(value);
       });
-  
+
       setTableData(SearchedText);
     }
  
   }, [searchValue,rows]);
-
-
+  
+  console.log(searchValue);
   return (
-    <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 5 }}>
-        {/* Table Name and button functionality */}
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          tableName={tableName}
-          setSearchValue={setSearchValue}
-          searchValue={searchValue}
-        />
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table
-            sx={{ minWidth: 550 }}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-          >
-            {/* Heading Cells */}
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={tableData.length}
-              headCells={headCells}
-              isChecked={isChecked}
-            />
-            <TableBody>
-              {stableSort(tableData, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+    <div>
+      <Box sx={{ width: "60%" }}>
+        <Paper sx={{ width: "100%", ml: 30, mt: 10 }}>
+          {/* Table Name and button functionality */}
+          <EnhancedTableToolbar
+            numSelected={selected.length}
+            tableName={tableName}
+            setSearchValue={setSearchValue}
+            searchValue={searchValue}
+          />
+          <TableContainer sx={{ maxHeight: 340 }}>
+            <Table
+              sx={{ minWidth: 550 }}
+              stickyHeader
+              aria-label="sticky table"
+              size={dense ? "small" : "small"}
+            >
+              {/* Heading Cells */}
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={tableData.length}
+                headCells={headCells}
+                isChecked={isChecked}
+              />
+              <TableBody>
+                {stableSort(tableData, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row.id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <>
-                      {isChecked ? (
-                        <TableRow
-                          hover
-                          onClick={(event) => handleClick(event, row.id)}
-                          role="checkbox"
-                          aria-checked={isItemSelected}
-                          tabIndex={-1}
-                          key={row.id}
-                          selected={isItemSelected}
-                        >
+                    return (
+                      <>
+                        <TableRow key={row.id}>
                           <TableCell padding="checkbox">
                             <Checkbox
-                              color="primary"
+                              onClick={(event) => handleClick(event, row.id)}
+                              role="checkbox"
+                              aria-checked={isItemSelected}
+                              tabIndex={-1}
+                              selected={isItemSelected}
+                              color="error"
                               checked={isItemSelected}
                               inputProps={{
                                 "aria-labelledby": labelId,
@@ -208,16 +199,38 @@ export default function TableComponent({
                           {headCells.map((cellName, id) => {
                             return (
                               <>
-                                <TableCell align="right" key={id}>
+                                <TableCell
+                                  align="right"
+                                  key={id}
+                                  sx={{ width: "1%" }}
+                                >
                                   {row[cellName.id]}
-                                  {cellName.id === "action" &&
+                                  {cellName.id === "read" &&
                                     action.isAction && (
                                       <Button
-                                        variant="contained"
+                                        sx={{ m: 0.2, p: 0.2 }}
+                                        style={{ textTransform: "none" }}
+                                        variant="outlined"
                                         size="small"
-                                        onClick={() => handleModalOpen(row)}
+                                        onClick={() =>
+                                          handleModalOpen("read", row)
+                                        }
                                       >
-                                        {action.actionName}
+                                        {cellName.label}
+                                      </Button>
+                                    )}
+                                  {cellName.id === "edit" &&
+                                    action.isAction && (
+                                      <Button
+                                        sx={{ m: 0.2, p: 0.2 }}
+                                        style={{ textTransform: "none" }}
+                                        variant="outlined"
+                                        size="small"
+                                        onClick={() =>
+                                          handleModalOpen("edit", row)
+                                        }
+                                      >
+                                        {cellName.label}
                                       </Button>
                                     )}
                                 </TableCell>
@@ -225,56 +238,32 @@ export default function TableComponent({
                             );
                           })}
                         </TableRow>
-                      ) : (
-                        <TableRow hover key={row.id}>
-                          {headCells.map((cellName, id) => {
-                            return (
-                              <TableCell align="right" key={id}>
-                                {row[cellName.id]}
-                                {cellName.id === "action" &&
-                                  action.isAction && (
-                                    <Button
-                                      variant="contained"
-                                      size="small"
-                                      onClick={() => handleModalOpen(row)}
-                                    >
-                                      {action.actionName}
-                                    </Button>
-                                  )}
-                              </TableCell>
-                            );
-                          })}
-                        </TableRow>
-                      )}
-                    </>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={tableData.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      />
-    </Box>
+                      </>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow
+                    style={{
+                      height: (dense ? 53 : 53) * emptyRows,
+                    }}
+                  >
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            component="div"
+            count={tableData.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </Box>
+    </div>
   );
 }

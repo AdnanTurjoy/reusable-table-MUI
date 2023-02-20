@@ -36,10 +36,16 @@ function App() {
       label: "Protein (g)",
     },
     {
-      id: "action",
+      id: "read",
       numeric: true,
       disablePadding: false,
-      label: "Action",
+      label: "Read",
+    },
+    {
+      id: "edit",
+      numeric: true,
+      disablePadding: false,
+      label: "Edit",
     },
   ];
   const rows = [
@@ -102,7 +108,6 @@ function App() {
   ];
   const [action, setAction] = useState({
     isAction: true,
-    actionName: "read",
   });
 
   const [checkedData, setCheckedData] = useState([]);
@@ -122,7 +127,12 @@ function App() {
     pb: 3,
   };
 
-  const handleModalOpen = (data) => {
+  const handleModalOpen = (actionType, data) => {
+    if (actionType === "read") {
+      // read a data
+    } else if (actionType === "edit") {
+      // edit field
+    }
     setCLickedAction(data);
     setOpen(true);
   };
